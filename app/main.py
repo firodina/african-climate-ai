@@ -11,6 +11,8 @@ st.set_page_config(page_title="African Climate Dashboard", layout="wide")
 st.title("🌍 African Climate Dashboard")
 
 # Load data function
+
+
 @st.cache_data
 def load_climate_data():
     countries = ['ethiopia', 'kenya', 'sudan', 'tanzania', 'nigeria']
@@ -23,7 +25,8 @@ def load_climate_data():
             df['Country'] = country.capitalize()
             dfs.append(df)
         else:
-            st.warning(f"Data file for {country} not found. Please ensure data/{country}_clean.csv exists.")
+            st.warning(
+                f"Data file for {country} not found. Please ensure data/{country}_clean.csv exists.")
 
     if dfs:
         combined_df = pd.concat(dfs, ignore_index=True)
@@ -34,11 +37,13 @@ def load_climate_data():
     else:
         return pd.DataFrame()
 
+
 # Load data
 df = load_climate_data()
 
 if df.empty:
-    st.error("No data available. Please check that cleaned CSV files exist in the data/ directory.")
+    st.error(
+        "No data available. Please check that cleaned CSV files exist in the data/ directory.")
     st.stop()
 
 # Sidebar controls
@@ -76,16 +81,18 @@ with col1:
     st.subheader("Temperature Trend (T2M)")
 
     if not filtered_df.empty:
-        monthly_temp = filtered_df.groupby(['Country', 'Month'])['T2M'].mean().reset_index()
+        monthly_temp = filtered_df.groupby(['Country', 'Month'])[
+            'T2M'].mean().reset_index()
 
         fig, ax = plt.subplots(figsize=(10, 6))
         for country in selected_countries:
             country_data = monthly_temp[monthly_temp['Country'] == country]
             if not country_data.empty:
                 ax.plot(country_data['Month'], country_data['T2M'],
-                       marker='o', label=country, linewidth=2)
+                        marker='o', label=country, linewidth=2)
 
-        ax.set_title(f'Monthly Average Temperature ({year_range[0]}-{year_range[1]})')
+        ax.set_title(
+            f'Monthly Average Temperature ({year_range[0]}-{year_range[1]})')
         ax.set_xlabel('Month')
         ax.set_ylabel('Temperature (°C)')
         ax.legend()
@@ -102,8 +109,10 @@ with col2:
 
     if not filtered_df.empty:
         fig, ax = plt.subplots(figsize=(10, 6))
-        sns.boxplot(data=filtered_df, x='Country', y='PRECTOTCORR', ax=ax, showfliers=False)
-        ax.set_title(f'Precipitation Distribution ({year_range[0]}-{year_range[1]})')
+        sns.boxplot(data=filtered_df, x='Country',
+                    y='PRECTOTCORR', ax=ax, showfliers=False)
+        ax.set_title(
+            f'Precipitation Distribution ({year_range[0]}-{year_range[1]})')
         ax.set_xlabel('Country')
         ax.set_ylabel('Precipitation (mm/day)')
         ax.tick_params(axis='x', rotation=45)
@@ -115,8 +124,10 @@ with col2:
 # Summary statistics
 st.subheader("Summary Statistics")
 if not filtered_df.empty:
-    temp_stats = filtered_df.groupby('Country')['T2M'].agg(['mean', 'std']).round(2)
-    precip_stats = filtered_df.groupby('Country')['PRECTOTCORR'].agg(['mean', 'std']).round(2)
+    temp_stats = filtered_df.groupby(
+        'Country')['T2M'].agg(['mean', 'std']).round(2)
+    precip_stats = filtered_df.groupby(
+        'Country')['PRECTOTCORR'].agg(['mean', 'std']).round(2)
 
     col3, col4 = st.columns(2)
     with col3:
@@ -127,3 +138,6 @@ if not filtered_df.empty:
         st.dataframe(precip_stats)
 else:
     st.info("No data available for selected filters.")
+
+    # // Footer
+st.markdown("---")
